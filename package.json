@@ -1,0 +1,58 @@
+{
+  "name": "lup-utils",
+  "version": "1.0.0",
+  "description": "NodeJS library providing utility functions.",
+  "main": "./lib/index",
+  "types": "./lib/index.d.ts",
+  "files": [ "lib/**/*" ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./json": "./lib/json.js",
+    "./string": "./lib/string.js",
+    "./terminal": "./lib/terminal.js",
+    "./utils": "./lib/utils.js"
+  },
+  "scripts": {
+    "test": "jest --config jestconfig.json",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepublishOnly": "npm test && npm run lint && npm run build",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LupCode/node-lup-utils.git"
+  },
+  "keywords": [
+    "node",
+    "module",
+    "utils",
+    "commands",
+    "exec",
+    "json",
+    "parse",
+    "strings"
+  ],
+  "author": "LupCode.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LupCode/node-lup-utils/issues"
+  },
+  "homepage": "https://github.com/LupCode/node-lup-utils#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.2.0",
+    "jest": "^30.0.5",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.4.1",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^5.9.2"
+  }
+}
