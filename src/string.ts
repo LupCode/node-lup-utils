@@ -1,5 +1,31 @@
 /**
  * Converts a byte value to a human-readable string.
+ * @param bytesPerSec Value in bytes per second to convert to a human-readable string.
+ * @param options Options for converting the string.
+ * @returns Human-readable string representation of the byte value as bits per second (e.g. "100 Mbps").
+ */
+export function byteValueToBitsHumanString(bytesPerSec: number, options?: {
+
+  /** Number of decimal places to include (default 0). */
+  precision?: number,
+
+}): string {
+  const bits = bytesPerSec * 8;
+  const base = 1000;
+  const units = ['bits', 'Kbps', 'Mbps', 'Gbps', 'Tbps', 'Pbps'];
+  let i = 0;
+  let humanReadable = bits;
+
+  while (humanReadable >= base && i < units.length - 1) {
+    humanReadable /= base;
+    i++;
+  }
+
+  return humanReadable.toFixed(options?.precision ?? 0) + ' ' + units[i];
+}
+
+/**
+ * Converts a byte value to a human-readable string.
  * 
  * @param bytes Value in bytes to convert to a human-readable string.
  * @param options Options for converting the string.
