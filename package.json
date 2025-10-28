@@ -1,6 +1,6 @@
 {
   "name": "lup-utils",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "NodeJS library providing utility functions.",
   "main": "./lib/index",
   "types": "./lib/index.d.ts",
@@ -8,6 +8,7 @@
   "exports": {
     ".": "./lib/index.js",
     "./json": "./lib/json.js",
+    "./objects": "./lib/objects.js",
     "./string": "./lib/string.js",
     "./terminal": "./lib/terminal.js",
     "./utils": "./lib/utils.js"

@@ -1,9 +1,11 @@
 export * from './json';
+export * from './object';
 export * from './string';
 export * from './terminal';
 export * from './utils';
 
 import * as json from './json';
+import * as object from './object';
 import * as string from './string';
 import * as terminal from './terminal';
 import * as utils from './utils';
@@ -13,6 +15,7 @@ import * as utils from './utils';
  */
 const lupUtils = {
   ...json,
+  ...object,
   ...string,
   ...terminal,
   ...utils,

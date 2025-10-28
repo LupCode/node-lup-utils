@@ -4,12 +4,13 @@
  * @param options Options for converting the string.
  * @returns Human-readable string representation of the byte value as bits per second (e.g. "100 Mbps").
  */
-export function byteValueToBitsHumanString(bytesPerSec: number, options?: {
-
-  /** Number of decimal places to include (default 0). */
-  precision?: number,
-
-}): string {
+export function byteValueToBitsHumanString(
+  bytesPerSec: number,
+  options?: {
+    /** Number of decimal places to include (default 0). */
+    precision?: number;
+  },
+): string {
   const bits = bytesPerSec * 8;
   const base = 1000;
   const units = ['bits', 'Kbps', 'Mbps', 'Gbps', 'Tbps', 'Pbps'];
@@ -26,24 +27,26 @@ export function byteValueToBitsHumanString(bytesPerSec: number, options?: {
 
 /**
  * Converts a byte value to a human-readable string.
- * 
+ *
  * @param bytes Value in bytes to convert to a human-readable string.
  * @param options Options for converting the string.
  * @returns Human-readable string representation of the byte value (e.g. )
  */
-export function byteValueToHumanString(bytes: number, options?: {
+export function byteValueToHumanString(
+  bytes: number,
+  options?: {
+    /** Whether to use the decimal (base 1000) or the binary (base 1024) for conversion (default 1024). */
+    decimalBase?: boolean;
 
-  /** Whether to use the decimal (base 1000) or the binary (base 1024) for conversion (default 1024). */
-  decimalBase?: boolean;
+    /** If the label should be binary (e.g. "GiB" vs "GB") if decimalBase is false (default false). */
+    binaryLabel?: boolean;
 
-  /** If the label should be binary (e.g. "GiB" vs "GB") if decimalBase is false (default false). */
-  binaryLabel?: boolean;
-
-  /** Number of decimal places to include (default 0). */
-  precision?: number;
-
-}): string {
-  const units = (!options?.decimalBase && options?.binaryLabel)
+    /** Number of decimal places to include (default 0). */
+    precision?: number;
+  },
+): string {
+  const units =
+    !options?.decimalBase && options?.binaryLabel
       ? ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB']
       : ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
   const step = options?.decimalBase ? 1000 : 1024;
@@ -55,7 +58,7 @@ export function byteValueToHumanString(bytes: number, options?: {
     i++;
   }
 
-  return humanReadable.toFixed(options?.precision ?? 0)+' '+units[i];
+  return humanReadable.toFixed(options?.precision ?? 0) + ' ' + units[i];
 }
 
 /**
