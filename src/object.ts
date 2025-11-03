@@ -1,3 +1,64 @@
+export function combineObjects<O, N>(
+  oldObj: O,
+  newObj: N,
+  options?: {
+    /** If true, undefined values in the new object will be ignored and won't overwrite the old values. */
+    ignoreUndefined?: boolean;
+
+    /** If true, arrays in the old and new object will be merged instead of replaced. */
+    mergeArrays?: boolean;
+
+    /** If true, performs a deep merge of nested objects. */
+    recursive?: boolean;
+  },
+): O & N {
+  if (Array.isArray(oldObj)) {
+    if (Array.isArray(newObj)) {
+      if (options?.mergeArrays) {
+        return [...oldObj, ...newObj] as any;
+      } else {
+        return newObj as any;
+      }
+    } else {
+      return (options?.ignoreUndefined && newObj === undefined ? oldObj : newObj) as any;
+    }
+  }
+
+  if (typeof oldObj !== 'object' || oldObj === null || typeof newObj !== 'object' || newObj === null) {
+    return (options?.ignoreUndefined && newObj === undefined ? oldObj : newObj) as any;
+  }
+
+  const result: any = { ...oldObj };
+  for (const key of Object.keys(newObj)) {
+    const newValue: any = (newObj as any)[key];
+    const oldValue: any = (oldObj as any)[key];
+
+    if (newValue === undefined && options?.ignoreUndefined) {
+      continue;
+    }
+
+    if (options?.mergeArrays && Array.isArray(oldValue) && Array.isArray(newValue)) {
+      result[key] = [...oldValue, ...newValue];
+      continue;
+    }
+
+    if (
+      options?.recursive &&
+      typeof oldValue === 'object' &&
+      oldValue !== null &&
+      typeof newValue === 'object' &&
+      newValue !== null
+    ) {
+      result[key] = combineObjects(oldValue, newValue, options);
+      continue;
+    }
+
+    result[key] = options?.ignoreUndefined && newValue === undefined ? oldValue : newValue;
+  }
+
+  return result;
+}
+
 /**
  * Deeply compares two values for equality.
  * @param a Object to compare.
@@ -49,15 +110,18 @@ export function difference<O, N>(
   oldObj: O,
   newObj: N,
   options?: {
-    /** Whether to ignore the order of items in arrays. */
-    ignoreOrder?: boolean;
+    /** If a key is not present in the new object, it will be ignored (by default the key is present and set to `undefined`). */
+    ignoreRemovedKeys?: boolean;
 
     /** Whether to perform a deep comparison of nested objects (does not apply to arrays). */
     recursive?: boolean;
+
+    /** Whether to strictly check the order of items in arrays (default false). */
+    strictOrder?: boolean;
   },
 ): Partial<O & N> {
   if (typeof oldObj !== 'object' || oldObj === null || typeof newObj !== 'object' || newObj === null) {
-    return deepEqual(oldObj, newObj, !options?.ignoreOrder) ? (oldObj as any) : (newObj as any);
+    return deepEqual(oldObj, newObj, options?.strictOrder) ? (oldObj as any) : (newObj as any);
   }
   const diff: Partial<O & N> = {};
   const oldKeys = new Set<string>(Object.keys(oldObj));
@@ -72,7 +136,7 @@ export function difference<O, N>(
     // recursive difference
     if (options?.recursive && typeof oldValue === 'object' && oldValue !== null) {
       if (typeof newValue !== 'object' || newValue === null) {
-        (diff as any)[key] = newValue;
+        if (newValue !== null || !options.ignoreRemovedKeys) (diff as any)[key] = newValue;
         continue;
       }
       (diff as any)[key] = difference(oldValue, newValue, options);
@@ -80,7 +144,8 @@ export function difference<O, N>(
     }
 
     // flat difference
-    if (!deepEqual(oldValue, newValue, !options?.ignoreOrder)) (diff as any)[key] = newValue;
+    if (!deepEqual(oldValue, newValue, options?.strictOrder) && (!options?.ignoreRemovedKeys || newValue !== undefined))
+      (diff as any)[key] = newValue;
   }
 
   // iterate new object

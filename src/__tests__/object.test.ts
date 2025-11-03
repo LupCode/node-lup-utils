@@ -1,4 +1,39 @@
-import { deepEqual, difference } from '../object';
+import { combineObjects, deepEqual, difference } from '../object';
+
+test('combineObjects()', async () => {
+  expect(combineObjects(undefined, undefined)).toBeUndefined();
+  expect(combineObjects(undefined, 5)).toBe(5);
+  expect(combineObjects(5, undefined)).toBeUndefined();
+  expect(combineObjects(5, undefined, { ignoreUndefined: true })).toBe(5);
+  expect(combineObjects(5, 10)).toBe(10);
+  expect(combineObjects(5, 0, { ignoreUndefined: true })).toBe(0);
+
+  expect(combineObjects([1, 2], [3, 4])).toEqual([3, 4]);
+  expect(combineObjects([1, 2], [3, 4], { mergeArrays: true })).toEqual([1, 2, 3, 4]);
+
+  expect(combineObjects({ a: 1, b: 2 }, { b: 3, c: 4 })).toEqual({ a: 1, b: 3, c: 4 });
+  expect(combineObjects({ a: 1, b: 2 }, { b: undefined, c: 4 }, { ignoreUndefined: false })).toEqual({
+    a: 1,
+    b: undefined,
+    c: 4,
+  });
+  expect(combineObjects({ a: 1, b: 2 }, { b: undefined, c: 4 }, { ignoreUndefined: true })).toEqual({
+    a: 1,
+    b: 2,
+    c: 4,
+  });
+
+  expect(combineObjects({ a: 1, b: { c: 5, d: 6 } }, { b: { e: 7 } }, { recursive: false })).toEqual({
+    a: 1,
+    b: { e: 7 },
+  });
+  expect(combineObjects({ a: 1, b: { c: 5, d: 6 } }, { b: { e: 7 } }, { recursive: true })).toEqual({
+    a: 1,
+    b: { c: 5, d: 6, e: 7 },
+  });
+
+  expect(combineObjects({ a: [1, 2], b: 2 }, { a: [3, 4] }, { mergeArrays: true })).toEqual({ a: [1, 2, 3, 4], b: 2 });
+});
 
 test('deepEqual()', async () => {
   // Primitive values (true)
@@ -76,47 +111,62 @@ test('deepEqual()', async () => {
 });
 
 test('difference()', async () => {
-  expect(difference({}, {}, { recursive: false, ignoreOrder: false })).toEqual({});
-  expect(difference({ a: 1 }, { a: 1 }, { recursive: false, ignoreOrder: false })).toEqual({});
-  expect(difference({ a: 1 }, { a: 2 }, { recursive: false, ignoreOrder: false })).toEqual({ a: 2 });
-  expect(difference({ a: 1, b: 2 }, { a: 1 }, { recursive: false, ignoreOrder: false })).toEqual({ b: undefined });
-  expect(difference({ a: 1 }, { a: 1, b: 2 }, { recursive: false, ignoreOrder: false })).toEqual({ b: 2 });
+  expect(difference({}, {}, { recursive: false, strictOrder: true })).toEqual({});
+  expect(difference({ a: 1 }, { a: 1 }, { recursive: false, strictOrder: true })).toEqual({});
+  expect(difference({ a: 1 }, { a: 2 }, { recursive: false, strictOrder: true })).toEqual({ a: 2 });
+  expect(difference({ a: 1, b: 2 }, { a: 1 }, { recursive: false, strictOrder: true })).toEqual({ b: undefined });
+  expect(difference({ a: 1 }, { a: 1, b: 2 }, { recursive: false, strictOrder: true })).toEqual({ b: 2 });
   expect(
     difference(
       { a: { b: 2, c: { d: 3, e: 4 } } },
       { a: { b: 2, c: { d: 3, e: 4 } } },
-      { recursive: false, ignoreOrder: false },
+      { recursive: false, strictOrder: true },
     ),
   ).toEqual({});
   expect(
     difference(
       { a: { b: 2, c: { d: 3, e: 4 } } },
       { a: { b: 3, c: { d: 3, e: 4 } } },
-      { recursive: false, ignoreOrder: false },
+      { recursive: false, strictOrder: true },
     ),
   ).toEqual({ a: { b: 3, c: { d: 3, e: 4 } } });
   expect(
     difference(
       { a: { b: 2, c: { d: 3, e: 4 } } },
       { a: { b: 2, c: { d: 3, e: 5 } } },
-      { recursive: false, ignoreOrder: false },
+      { recursive: false, strictOrder: true },
     ),
   ).toEqual({ a: { b: 2, c: { d: 3, e: 5 } } });
-  expect(difference({ a: [1, 2, 3] }, { a: [1, 2, 3] }, { recursive: false, ignoreOrder: false })).toEqual({});
-  expect(difference({ a: [1, 2, 3] }, { a: [3, 2, 1] }, { recursive: false, ignoreOrder: false })).toEqual({
+  expect(difference({ a: [1, 2, 3] }, { a: [1, 2, 3] }, { recursive: false, strictOrder: true })).toEqual({});
+  expect(difference({ a: [1, 2, 3] }, { a: [3, 2, 1] }, { recursive: false, strictOrder: true })).toEqual({
     a: [3, 2, 1],
   });
-  expect(difference({ a: [1, 2, 3] }, { a: [4, 5, 6] }, { recursive: false, ignoreOrder: false })).toEqual({
+  expect(difference({ a: [1, 2, 3] }, { a: [4, 5, 6] }, { recursive: false, strictOrder: true })).toEqual({
     a: [4, 5, 6],
   });
 
-  expect(difference({ a: [1, 2, 3] }, { a: [3, 2, 1] }, { recursive: false, ignoreOrder: true })).toEqual({});
+  expect(difference({ a: [1, 2, 3] }, { a: [3, 2, 1] }, { recursive: false, strictOrder: false })).toEqual({});
 
   expect(
     difference(
       { a: { b: 2, c: { d: 3, e: 4 } } },
       { a: { b: 2, c: { d: 3, e: 5 } } },
-      { recursive: true, ignoreOrder: false },
+      { recursive: true, strictOrder: true },
     ),
   ).toEqual({ a: { c: { e: 5 } } });
+
+  expect(
+    difference(
+      { a: '1', b: '2', c: '3' },
+      { b: '2' },
+      { recursive: false, strictOrder: false, ignoreRemovedKeys: true },
+    ),
+  ).toEqual({});
+  expect(
+    difference(
+      { a: '1', b: '2', c: '3' },
+      { b: '2' },
+      { recursive: false, strictOrder: false, ignoreRemovedKeys: false },
+    ),
+  ).toEqual({ a: undefined, c: undefined });
 });
