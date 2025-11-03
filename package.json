@@ -1,17 +1,35 @@
 {
   "name": "lup-utils",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "NodeJS library providing utility functions.",
   "main": "./lib/index",
   "types": "./lib/index.d.ts",
   "files": [ "lib/**/*" ],
   "exports": {
-    ".": "./lib/index.js",
-    "./json": "./lib/json.js",
-    "./objects": "./lib/objects.js",
-    "./string": "./lib/string.js",
-    "./terminal": "./lib/terminal.js",
-    "./utils": "./lib/utils.js"
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./json": {
+      "types": "./lib/json.d.ts",
+      "default": "./lib/json.js"
+    },
+    "./objects": {
+      "types": "./lib/objects.d.ts",
+      "default": "./lib/objects.js"
+    },
+    "./string": {
+      "types": "./lib/string.d.ts",
+      "default": "./lib/string.js"
+    },
+    "./terminal": {
+      "types": "./lib/terminal.d.ts",
+      "default": "./lib/terminal.js"
+    },
+    "./utils": {
+      "types": "./lib/utils.d.ts",
+      "default": "./lib/utils.js"
+    }
   },
   "scripts": {
     "test": "jest --config jestconfig.json",
