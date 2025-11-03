@@ -1,6 +1,6 @@
 {
   "name": "lup-utils",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "NodeJS library providing utility functions.",
   "main": "./lib/index",
   "types": "./lib/index.d.ts",
@@ -14,9 +14,9 @@
       "types": "./lib/json.d.ts",
       "default": "./lib/json.js"
     },
-    "./objects": {
-      "types": "./lib/objects.d.ts",
-      "default": "./lib/objects.js"
+    "./object": {
+      "types": "./lib/object.d.ts",
+      "default": "./lib/object.js"
     },
     "./string": {
       "types": "./lib/string.d.ts",
