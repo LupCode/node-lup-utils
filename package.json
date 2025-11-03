@@ -1,6 +1,6 @@
 {
   "name": "lup-utils",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "NodeJS library providing utility functions.",
   "main": "./lib/index",
   "types": "./lib/index.d.ts",

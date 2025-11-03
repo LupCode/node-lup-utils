@@ -1,38 +1,38 @@
-import { combineObjects, deepEqual, difference } from '../object';
+import { combine, deepEqual, difference } from '../object';
 
-test('combineObjects()', async () => {
-  expect(combineObjects(undefined, undefined)).toBeUndefined();
-  expect(combineObjects(undefined, 5)).toBe(5);
-  expect(combineObjects(5, undefined)).toBeUndefined();
-  expect(combineObjects(5, undefined, { ignoreUndefined: true })).toBe(5);
-  expect(combineObjects(5, 10)).toBe(10);
-  expect(combineObjects(5, 0, { ignoreUndefined: true })).toBe(0);
+test('combine()', async () => {
+  expect(combine(undefined, undefined)).toBeUndefined();
+  expect(combine(undefined, 5)).toBe(5);
+  expect(combine(5, undefined)).toBeUndefined();
+  expect(combine(5, undefined, { ignoreUndefined: true })).toBe(5);
+  expect(combine(5, 10)).toBe(10);
+  expect(combine(5, 0, { ignoreUndefined: true })).toBe(0);
 
-  expect(combineObjects([1, 2], [3, 4])).toEqual([3, 4]);
-  expect(combineObjects([1, 2], [3, 4], { mergeArrays: true })).toEqual([1, 2, 3, 4]);
+  expect(combine([1, 2], [3, 4])).toEqual([3, 4]);
+  expect(combine([1, 2], [3, 4], { mergeArrays: true })).toEqual([1, 2, 3, 4]);
 
-  expect(combineObjects({ a: 1, b: 2 }, { b: 3, c: 4 })).toEqual({ a: 1, b: 3, c: 4 });
-  expect(combineObjects({ a: 1, b: 2 }, { b: undefined, c: 4 }, { ignoreUndefined: false })).toEqual({
+  expect(combine({ a: 1, b: 2 }, { b: 3, c: 4 })).toEqual({ a: 1, b: 3, c: 4 });
+  expect(combine({ a: 1, b: 2 }, { b: undefined, c: 4 }, { ignoreUndefined: false })).toEqual({
     a: 1,
     b: undefined,
     c: 4,
   });
-  expect(combineObjects({ a: 1, b: 2 }, { b: undefined, c: 4 }, { ignoreUndefined: true })).toEqual({
+  expect(combine({ a: 1, b: 2 }, { b: undefined, c: 4 }, { ignoreUndefined: true })).toEqual({
     a: 1,
     b: 2,
     c: 4,
   });
 
-  expect(combineObjects({ a: 1, b: { c: 5, d: 6 } }, { b: { e: 7 } }, { recursive: false })).toEqual({
+  expect(combine({ a: 1, b: { c: 5, d: 6 } }, { b: { e: 7 } }, { recursive: false })).toEqual({
     a: 1,
     b: { e: 7 },
   });
-  expect(combineObjects({ a: 1, b: { c: 5, d: 6 } }, { b: { e: 7 } }, { recursive: true })).toEqual({
+  expect(combine({ a: 1, b: { c: 5, d: 6 } }, { b: { e: 7 } }, { recursive: true })).toEqual({
     a: 1,
     b: { c: 5, d: 6, e: 7 },
   });
 
-  expect(combineObjects({ a: [1, 2], b: 2 }, { a: [3, 4] }, { mergeArrays: true })).toEqual({ a: [1, 2, 3, 4], b: 2 });
+  expect(combine({ a: [1, 2], b: 2 }, { a: [3, 4] }, { mergeArrays: true })).toEqual({ a: [1, 2, 3, 4], b: 2 });
 });
 
 test('deepEqual()', async () => {

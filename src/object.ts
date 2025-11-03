@@ -1,4 +1,11 @@
-export function combineObjects<O, N>(
+/**
+ * Combines two objects into one, with options for handling undefined values, merging arrays, and deep merging.
+ * @param oldObj The original object.
+ * @param newObj The object to merge into the original.
+ * @param options Options for merging behavior.
+ * @returns A new object that combines the properties of both input objects.
+ */
+export function combine<O, N>(
   oldObj: O,
   newObj: N,
   options?: {
@@ -49,7 +56,7 @@ export function combineObjects<O, N>(
       typeof newValue === 'object' &&
       newValue !== null
     ) {
-      result[key] = combineObjects(oldValue, newValue, options);
+      result[key] = combine(oldValue, newValue, options);
       continue;
     }
 
